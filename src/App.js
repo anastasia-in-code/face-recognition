@@ -18,8 +18,27 @@ class App extends Component {
       imageUrl: '',
       box: {},
       isAuth: false,
-      route: 'signin'
+      route: 'signin',
+      user: {
+        id: null,
+        name: '',
+        email: '',
+        entries: 0,
+        joined_at: ''
+      }
     }
+  }
+
+  loadUser = (data) => {
+    this.setState({
+      user: {
+        id: data.id,
+        name: data.name,
+        email: data.email,
+        entries: data.entries,
+        joined_at: data.joined_at
+      }
+    })
   }
 
   calculateDetectedLocation = (res) => {
@@ -78,7 +97,26 @@ class App extends Component {
 
     fetch("https://api.clarifai.com/v2/models/" + MODEL_ID + "/outputs", requestOptions)
       .then(response => response.json())
-      .then(result => this.detectFace(this.calculateDetectedLocation(result)))
+      .then(result => {
+        debugger
+        if (result) {
+          fetch('http://localhost:3000/image', {
+            method: 'put',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              id: this.state.user.id,
+            })
+          })
+            .then(res => res.json())
+            .then(data => {
+              this.setState(
+                {
+                  user: Object.assign(this.state.user, { entries: data.entries })
+                })
+            })
+        }
+        this.detectFace(this.calculateDetectedLocation(result))
+      })
       .catch(error => console.log('error', error));
 
   }
@@ -90,18 +128,22 @@ class App extends Component {
   }
 
   render() {
-    const {imageUrl, box, route, isAuth} = this.state
+    const { imageUrl, box, route, isAuth } = this.state
     return (
       <div className="App">
         <ParticlesBg color="#4a6df4" num={300} type="cobweb" bg={true} />
         {isAuth && <Navigation onRouteChange={this.onRouteChange} />}
         {route === 'signin' ?
-          <Signin onRouteChange={this.onRouteChange} /> :
+          <Signin loadUser={this.loadUser}
+            onRouteChange={this.onRouteChange} /> :
           route === 'signup' ?
-            <Signup onRouteChange={this.onRouteChange} /> :
+            <Signup loadUser={this.loadUser}
+              onRouteChange={this.onRouteChange} /> :
             <div>
               <Logo />
-              <Rank />
+              <Rank
+                name={this.state.user.name}
+                rank={this.state.user.entries} />
               <ImageForm
                 onInputChange={this.onInputChange}
                 onSubmit={this.onSubmit} />
