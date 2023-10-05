@@ -10,23 +10,25 @@ import FaceRecognition from './components/FaceRecognition/FaceRecognition'
 import Signup from './components/Signup/Signup'
 import Signin from './components/Signin/Signin'
 
+const initialState = {
+  input: '',
+  imageUrl: '',
+  box: {},
+  isAuth: false,
+  route: 'signin',
+  user: {
+    id: null,
+    name: '',
+    email: '',
+    entries: 0,
+    joined_at: ''
+  }
+}
+
 class App extends Component {
   constructor() {
     super();
-    this.state = {
-      input: '',
-      imageUrl: '',
-      box: {},
-      isAuth: false,
-      route: 'signin',
-      user: {
-        id: null,
-        name: '',
-        email: '',
-        entries: 0,
-        joined_at: ''
-      }
-    }
+    this.state = initialState
   }
 
   loadUser = (data) => {
@@ -64,38 +66,14 @@ class App extends Component {
 
   onSubmit = () => {
     this.setState({ imageUrl: this.state.input })
-    const PAT = '59957ad270a74bb4afc51ff8ccf418a3';
-    const USER_ID = 'anastasiia_unicorn';
-    const APP_ID = 'facerecof1408';
-    const MODEL_ID = 'face-detection';
-    const IMAGE_URL = this.state.imageUrl
 
-    const raw = JSON.stringify({
-      "user_app_id": {
-        "user_id": USER_ID,
-        "app_id": APP_ID
-      },
-      "inputs": [
-        {
-          "data": {
-            "image": {
-              "url": IMAGE_URL
-            }
-          }
-        }
-      ]
-    });
-
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': 'Key ' + PAT
-      },
-      body: raw
-    };
-
-    fetch("https://api.clarifai.com/v2/models/" + MODEL_ID + "/outputs", requestOptions)
+    fetch('http://localhost:3000/imageurl', {
+      method: 'post',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        input: this.state.input,
+      })
+    })
       .then(response => response.json())
       .then(result => {
         if (result) {
@@ -113,6 +91,7 @@ class App extends Component {
                   user: Object.assign(this.state.user, { entries: data })
                 })
             })
+            .catch(console.log)
         }
         this.detectFace(this.calculateDetectedLocation(result))
       })
@@ -122,7 +101,7 @@ class App extends Component {
 
   onRouteChange = (route) => {
     if (route === 'home') this.setState({ isAuth: true })
-    else this.setState({ isAuth: false })
+    else this.setState(initialState)
     this.setState({ route: route })
   }
 
