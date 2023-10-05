@@ -98,7 +98,6 @@ class App extends Component {
     fetch("https://api.clarifai.com/v2/models/" + MODEL_ID + "/outputs", requestOptions)
       .then(response => response.json())
       .then(result => {
-        debugger
         if (result) {
           fetch('http://localhost:3000/image', {
             method: 'put',
@@ -111,7 +110,7 @@ class App extends Component {
             .then(data => {
               this.setState(
                 {
-                  user: Object.assign(this.state.user, { entries: data.entries })
+                  user: Object.assign(this.state.user, { entries: data })
                 })
             })
         }
