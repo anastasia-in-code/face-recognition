@@ -1,7 +1,5 @@
 class apiService {
-    BASE = 'https://glacial-harbor-16594-9b4b8730b23a.herokuapp.com'
-    // BASE = 'http://localhost:3000'
-
+    BASE = process.env.BASE
 
     signin = async (email, password) => {
         try {
