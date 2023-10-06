@@ -101,6 +101,7 @@ class App extends Component {
 
   render() {
     const { imageUrl, box, route, isAuth } = this.state
+    
     return (
       <div className="App">
         <ParticlesBg color="#4a6df4" num={300} type="cobweb" bg={true} />
