@@ -2,6 +2,9 @@ import React, { Component } from 'react'
 import 'tachyons'
 import './App.css';
 import ParticlesBg from 'particles-bg'
+import apiService from './api'
+
+//Components
 import Navigation from './components/Navigation/Navigation';
 import Logo from './components/Logo/Logo'
 import ImageForm from './components/ImageForm/ImageForm'
@@ -71,41 +74,22 @@ class App extends Component {
 
   // handles Submit
   // sends request to server
-  onSubmit = () => {
+  onSubmit = async () => {
     this.setState({ imageUrl: this.state.input })
 
     // request to get face coordinates
-    fetch('http://localhost:3000/imageurl', {
-      method: 'post',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        input: this.state.input,
-      })
-    })
-      .then(response => response.json())
-      .then(result => {
-        if (result) {
-          //request to update user rank(entries)
-          fetch('http://localhost:3000/image', {
-            method: 'put',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              id: this.state.user.id,
-            })
-          })
-            .then(res => res.json())
-            .then(data => {
-              this.setState(
-                {
-                  user: Object.assign(this.state.user, { entries: data })
-                })
-            })
-            .catch(console.log)
-        }
-        this.detectFace(this.calculateDetectedLocation(result))
-      })
-      .catch(error => console.log('error', error));
+    const data = await apiService.clarifai(this.state.input)
 
+    if (data) {
+      //request to update user rank(entries)
+      const entries = await apiService.updateEntries(this.state.user.id)
+
+      this.setState({
+        user: Object.assign(this.state.user, { entries })
+      })
+    }
+
+    this.detectFace(this.calculateDetectedLocation(data))
   }
 
   // handle route changing on signin/signup/sigout
