@@ -1,4 +1,5 @@
 import React from "react"
+import apiService from "../../api"
 
 class SignIn extends React.Component {
    constructor(props) {
@@ -17,22 +18,13 @@ class SignIn extends React.Component {
       this.setState({ signInPassword: event.target.value })
    }
 
-   onSubmitSignIn = () => {
-      fetch('http://localhost:3000/signin', {
-         method: 'post',
-         headers: { 'Content-Type': 'application/json' },
-         body: JSON.stringify({
-            email: this.state.signInEmail,
-            password: this.state.signInPassword,
-         })
-      })
-         .then(res => res.json())
-         .then(user => {
-            if (user.id) {
-               this.props.loadUser(user)
-               this.props.onRouteChange('home')
-            }
-         })
+   onSubmitSignIn = async () => {
+      const data = await apiService.signin(this.state.signInEmail, this.state.signInPassword)
+
+      if (data.id) {
+         this.props.loadUser(data)
+         this.props.onRouteChange('home')
+      }
    }
 
    render() {

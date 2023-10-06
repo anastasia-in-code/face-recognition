@@ -1,4 +1,6 @@
 import React from "react"
+import apiService from '../../api'
+
 class Signup extends React.Component {
    constructor(props) {
       super(props)
@@ -21,26 +23,19 @@ class Signup extends React.Component {
       this.setState({ signUpName: event.target.value })
    }
 
-   onSubmitSignUp = () => {
-      fetch('http://localhost:3000/signup', {
-         method: 'post',
-         headers: { 'Content-Type': 'application/json' },
-         body: JSON.stringify({
-            email: this.state.signUpEmail,
-            password: this.state.signUpPassword,
-            name: this.state.signUpName
-         })
-      })
-         .then(res => res.json())
-         .then(user => {
-            if (user.id) {
-               this.props.loadUser(user)
-               this.props.onRouteChange('home')
-            }
-         })
+   onSubmitSignUp = async () => {
+      const data = await apiService.signup(this.state.signUpEmail,
+         this.state.signUpName,
+         this.state.signUpPassword)
+
+      if (data.id) {
+         this.props.loadUser(data)
+         this.props.onRouteChange('home')
+      }
+
    }
-   render () {
-      const {onRouteChange} = this.props
+   render() {
+      const { onRouteChange } = this.props
       return (
          <div>
             <article className="br3 ba b--black-10 mv4 w-100 w-50-m w-25-l mw5 shadow-5 center">
@@ -105,7 +100,7 @@ class Signup extends React.Component {
          </div>
       )
    }
-   
+
 }
 
 export default Signup
