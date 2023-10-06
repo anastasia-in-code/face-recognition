@@ -11,7 +11,7 @@ const Logo = () => {
          glareEnable={true}
          glareMaxOpacity={0.45}
          scale={1.02}>
-            <img className={`${s.logo}`} alt='logo' src={brain} />
+         <img className={`${s.logo}`} alt='logo' src={brain} />
       </Tilt>
    </div>
 }

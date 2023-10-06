@@ -31,6 +31,7 @@ class App extends Component {
     this.state = initialState
   }
 
+  // stores authorized user info into state
   loadUser = (data) => {
     this.setState({
       user: {
@@ -43,11 +44,13 @@ class App extends Component {
     })
   }
 
+  // calculates the area of detected face on the picture
   calculateDetectedLocation = (res) => {
     const face = res.outputs[0].data.regions[0].region_info.bounding_box
     const img = document.getElementById('imagedetection')
     const width = Number(img.width)
     const height = Number(img.height)
+
     return {
       leftCol: face.left_col * width,
       topRow: face.top_row * height,
@@ -56,17 +59,22 @@ class App extends Component {
     }
   }
 
+  // stores face coordinates to state
   detectFace = (box) => {
     this.setState({ box: box });
   }
 
+  // handles input change
   onInputChange = (e) => {
     this.setState({ input: e.target.value })
   }
 
+  // handles Submit
+  // sends request to server
   onSubmit = () => {
     this.setState({ imageUrl: this.state.input })
 
+    // request to get face coordinates
     fetch('http://localhost:3000/imageurl', {
       method: 'post',
       headers: { 'Content-Type': 'application/json' },
@@ -77,6 +85,7 @@ class App extends Component {
       .then(response => response.json())
       .then(result => {
         if (result) {
+          //request to update user rank(entries)
           fetch('http://localhost:3000/image', {
             method: 'put',
             headers: { 'Content-Type': 'application/json' },
@@ -99,6 +108,7 @@ class App extends Component {
 
   }
 
+  // handle route changing on signin/signup/sigout
   onRouteChange = (route) => {
     if (route === 'home') this.setState({ isAuth: true })
     else this.setState(initialState)
