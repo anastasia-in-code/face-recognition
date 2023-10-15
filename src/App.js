@@ -10,8 +10,7 @@ import Logo from './components/Logo/Logo'
 import ImageForm from './components/ImageForm/ImageForm'
 import Rank from './components/Rank/Rank'
 import FaceRecognition from './components/FaceRecognition/FaceRecognition'
-import Signup from './components/Signup/Signup'
-import Signin from './components/Signin/Signin'
+import AuthForm from './components/forms/AuthForm';
 
 const initialState = {
   input: '',
@@ -101,17 +100,24 @@ class App extends Component {
 
   render() {
     const { imageUrl, box, route, isAuth } = this.state
-    
+
     return (
       <div className="App">
         <ParticlesBg color="#4a6df4" num={300} type="cobweb" bg={true} />
         {isAuth && <Navigation onRouteChange={this.onRouteChange} />}
         {route === 'signin' ?
-          <Signin loadUser={this.loadUser}
-            onRouteChange={this.onRouteChange} /> :
+          <AuthForm
+            formName={"Sign In"}
+            onRouteChange={this.onRouteChange}
+            loadUser={this.loadUser}
+          /> :
           route === 'signup' ?
-            <Signup loadUser={this.loadUser}
-              onRouteChange={this.onRouteChange} /> :
+            <AuthForm
+              formName={"Sign Up"}
+              onRouteChange={this.onRouteChange}
+              loadUser={this.loadUser}
+            />
+            :
             <div>
               <Logo />
               <Rank
