@@ -3,6 +3,8 @@ import 'tachyons'
 import './App.css';
 import ParticlesBg from 'particles-bg'
 import apiService from './api'
+import { ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 
 //Components
 import Navigation from './components/Navigation/Navigation';
@@ -98,11 +100,23 @@ class App extends Component {
     this.setState({ route: route })
   }
 
+
   render() {
     const { imageUrl, box, route, isAuth } = this.state
 
     return (
       <div className="App">
+        <ToastContainer
+          position="top-left"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="dark" />
         <ParticlesBg color="#4a6df4" num={300} type="cobweb" bg={true} />
         {isAuth && <Navigation onRouteChange={this.onRouteChange} />}
         {route === 'signin' ?

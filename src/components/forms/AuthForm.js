@@ -1,6 +1,9 @@
 import { useState } from "react"
 import apiService from '../../api'
+import { toast } from 'react-toastify';
+import { object, string } from 'yup';
 
+//component is used for authentication (both signin and signup)
 const AuthForm = ({ formName, onRouteChange, loadUser }) => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -11,19 +14,45 @@ const AuthForm = ({ formName, onRouteChange, loadUser }) => {
     const onPasswordChange = (event) => setPassword(event.target.value)
 
     const onNameChange = (event) => setName(event.target.value)
-    
-    const onSubmit = async () => {
-        const data = formName === "Sign Up"?
-        await apiService.signup(
-            email,
-            name,
-            password
-        ) : 
-        await apiService.signin(email, password)
 
-        if (data.id) {
-            loadUser(data)
-            onRouteChange('home')
+    //validation Schema on signup
+    let siginupUserSchema = object({
+        name: string().required().min(3),
+        email: string().required().email().min(5),
+        password: string().required().min(6)
+    })
+
+    //validation Schema on signin
+    let sigininUserSchema = object({
+        email: string().required(),
+        password: string().required()
+    })
+
+    //AuthForm submittions
+    const onSubmit = async () => {
+        try {
+            if (formName === "Sign Up") {
+                await siginupUserSchema.validate({ name, email, password })
+            } else {
+                await sigininUserSchema.validate({ email, password })
+            }
+
+            const data = formName === "Sign Up" ?
+                await apiService.signup(
+                    email,
+                    name,
+                    password
+                ) :
+                await apiService.signin(email, password)
+
+            if (data.id) {
+                loadUser(data)
+                onRouteChange('home')
+            } else {
+                return toast.error(data)
+            }
+        } catch (e) {
+            return toast.error(e.message)
         }
     }
 
