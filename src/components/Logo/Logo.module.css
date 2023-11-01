@@ -1,11 +1,8 @@
 .tilt {
    background-image: linear-gradient(
     to right top,
-    #2c81ff,
-    #4a6df4,
-    #6257e6,
-    #763cd5,
-    #8608c0
+    #348AC7,
+    #F2F2F2
   );
   display: flex;
 }

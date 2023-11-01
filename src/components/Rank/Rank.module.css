@@ -1,0 +1,6 @@
+.rank {
+    width: 40%;
+    margin: 0 auto;
+    backdrop-filter: blur(10px); 
+    border-radius: 0.25rem;
+}  

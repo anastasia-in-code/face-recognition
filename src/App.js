@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import 'tachyons'
 import './App.css';
+import { toast } from 'react-toastify';
 import ParticlesBg from 'particles-bg'
 import apiService from './api'
 import { ToastContainer } from 'react-toastify';
@@ -50,6 +51,7 @@ class App extends Component {
 
   // calculates the area of detected face on the picture
   calculateDetectedLocation = (res) => {
+
     const face = res.outputs[0].data.regions[0].region_info.bounding_box
     const img = document.getElementById('imagedetection')
     const width = Number(img.width)
@@ -76,21 +78,24 @@ class App extends Component {
   // handles Submit
   // sends request to server
   onSubmit = async () => {
+    if(!this.state.input) return toast.error('please, provide URL for detection')
     this.setState({ imageUrl: this.state.input })
 
     // request to get face coordinates
     const data = await apiService.clarifai(this.state.input)
 
-    if (data) {
+    if (data.status.code === 10000) {
       //request to update user rank(entries)
       const entries = await apiService.updateEntries(this.state.user.id)
 
       this.setState({
         user: Object.assign(this.state.user, { entries })
       })
+      this.detectFace(this.calculateDetectedLocation(data))
+    } else {
+      toast.error(data.status.description)
+      this.setState({ imageUrl: '' })
     }
-
-    this.detectFace(this.calculateDetectedLocation(data))
   }
 
   // handle route changing on signin/signup/sigout
@@ -117,7 +122,7 @@ class App extends Component {
           draggable
           pauseOnHover
           theme="dark" />
-        <ParticlesBg color="#4a6df4" num={300} type="cobweb" bg={true} />
+        <ParticlesBg color="#333333" num={300} type="cobweb" bg={true} />
         {isAuth && <Navigation onRouteChange={this.onRouteChange} />}
         {route === 'signin' ?
           <AuthForm

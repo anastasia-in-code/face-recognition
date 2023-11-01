@@ -1,26 +1,15 @@
 body {
   height: 100vh;
   margin: 0;
-  font-family:  "Courier New", "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+  font-family:  "Sans", "Ubuntu", "Oxygen", "Segoe UI", "Roboto", 
+     "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   background-image: linear-gradient(
     to right top,
-    #2c81ff,
-    #4a6df4,
-    #6257e6,
-    #763cd5,
-    #8608c0
+    #348AC7,
+    #F2F2F2
   );
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
-}
-
-button {
-  cursor: pointer;
-}
