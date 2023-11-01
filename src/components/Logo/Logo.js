@@ -1,7 +1,8 @@
 import React from 'react';
 import Tilt from 'react-parallax-tilt';
 import s from './Logo.module.css'
-import brain from './brain.png'
+import ai from './ai.png'
+
 
 const Logo = () => {
    return <div className='ma4 mt3'>
@@ -11,7 +12,7 @@ const Logo = () => {
          glareEnable={true}
          glareMaxOpacity={0.45}
          scale={1.02}>
-         <img className={`${s.logo}`} alt='logo' src={brain} />
+         <img className={`${s.logo}`} alt='logo' src={ai} />
       </Tilt>
    </div>
 }
