@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { useState, useReducer } from 'react'
 import 'tachyons'
 import './App.css';
 import { toast } from 'react-toastify';
@@ -15,43 +15,30 @@ import Rank from './components/Rank/Rank'
 import FaceRecognition from './components/FaceRecognition/FaceRecognition'
 import AuthForm from './components/forms/AuthForm';
 
-const initialState = {
-  input: '',
-  imageUrl: '',
-  box: {},
-  isAuth: false,
-  route: 'signin',
-  user: {
-    id: null,
-    name: '',
-    email: '',
-    entries: 0,
-    joined_at: ''
-  }
-}
+const App = () => {
+  const [input, setInput] = useState('')
+  const [imageUrl, setImageUrl] = useState('')
+  const [box, setBox] = useState({})
+  const [route, setRoute] = useState('home')
+  const [user, setUser] = useState({})
 
-class App extends Component {
-  constructor() {
-    super();
-    this.state = initialState
-  }
+  const [isAuth, setIsAuth] = useReducer(false)
 
   // stores authorized user info into state
-  loadUser = (data) => {
-    this.setState({
-      user: {
-        id: data.id,
-        name: data.name,
-        email: data.email,
-        entries: data.entries,
-        joined_at: data.joined_at
-      }
+  const loadUser = (data) => {
+
+    setUser({
+      ...user,
+      id: data.id,
+      name: data.name,
+      email: data.email,
+      entries: data.entries,
+      joined_at: data.joined_at
     })
   }
 
   // calculates the area of detected face on the picture
-  calculateDetectedLocation = (res) => {
-
+  const calculateDetectedLocation = (res) => {
     const face = res.outputs[0].data.regions[0].region_info.bounding_box
     const img = document.getElementById('imagedetection')
     const width = Number(img.width)
@@ -66,93 +53,95 @@ class App extends Component {
   }
 
   // stores face coordinates to state
-  detectFace = (box) => {
-    this.setState({ box: box });
+  const detectFace = (newBox) => {
+    setBox({
+      ...box, ...newBox
+    })
   }
 
   // handles input change
-  onInputChange = (e) => {
-    this.setState({ input: e.target.value })
+  const onInputChange = (e) => {
+    setInput(e.target.value)
   }
 
   // handles Submit
   // sends request to server
-  onSubmit = async () => {
-    if(!this.state.input) return toast.error('please, provide URL for detection')
-    this.setState({ imageUrl: this.state.input })
+  const onSubmit = async () => {
+    if (!input) return toast.error('please, provide URL for detection')
+    setImageUrl(input)
 
     // request to get face coordinates
-    const data = await apiService.clarifai(this.state.input)
+    const data = await apiService.clarifai(imageUrl)
 
     if (data.status.code === 10000) {
       //request to update user rank(entries)
-      const entries = await apiService.updateEntries(this.state.user.id)
+      if (user?.id) {
+        const entries = await apiService.updateEntries(user.id)
+        setUser({
+          ...user,
+          entries: entries
+        })
+      }
 
-      this.setState({
-        user: Object.assign(this.state.user, { entries })
-      })
-      this.detectFace(this.calculateDetectedLocation(data))
+      detectFace(calculateDetectedLocation(data))
     } else {
       toast.error(data.status.description)
-      this.setState({ imageUrl: '' })
+      setImageUrl('')
     }
   }
 
   // handle route changing on signin/signup/sigout
-  onRouteChange = (route) => {
-    if (route === 'home') this.setState({ isAuth: true })
-    else this.setState(initialState)
-    this.setState({ route: route })
+  const onRouteChange = (route) => {
+    if (route === 'home') setIsAuth(true)
+    setRoute(route)
   }
 
+  return (
+    <div className="App">
+      <ToastContainer
+        position="top-left"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark" />
+      <ParticlesBg color="#333333" num={300} type="cobweb" bg={true} />
 
-  render() {
-    const { imageUrl, box, route, isAuth } = this.state
-
-    return (
-      <div className="App">
-        <ToastContainer
-          position="top-left"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="dark" />
-        <ParticlesBg color="#333333" num={300} type="cobweb" bg={true} />
-        {isAuth && <Navigation onRouteChange={this.onRouteChange} />}
-        {route === 'signin' ?
+      {isAuth ? <Navigation isAuth={isAuth} onRouteChange={onRouteChange} />
+        : <Navigation isAuth={isAuth} onRouteChange={onRouteChange} />}
+        
+      {route === 'signin' ?
+        <AuthForm
+          formName={"Sign In"}
+          onRouteChange={onRouteChange}
+          loadUser={loadUser}
+        /> :
+        route === 'signup' ?
           <AuthForm
-            formName={"Sign In"}
-            onRouteChange={this.onRouteChange}
-            loadUser={this.loadUser}
-          /> :
-          route === 'signup' ?
-            <AuthForm
-              formName={"Sign Up"}
-              onRouteChange={this.onRouteChange}
-              loadUser={this.loadUser}
-            />
-            :
-            <div>
-              <Logo />
-              <Rank
-                name={this.state.user.name}
-                rank={this.state.user.entries} />
-              <ImageForm
-                onInputChange={this.onInputChange}
-                onSubmit={this.onSubmit} />
-              <FaceRecognition
-                box={box}
-                imageUrl={imageUrl} />
-            </div>
-        }
-      </div>
-    );
-  }
+            formName={"Sign Up"}
+            onRouteChange={onRouteChange}
+            loadUser={loadUser}
+          />
+          :
+          <div>
+            <Logo />
+            <Rank
+              name={'Anonymous'}
+              rank={user.entries} />
+            <ImageForm
+              onInputChange={onInputChange}
+              onSubmit={onSubmit} />
+            <FaceRecognition
+              box={box}
+              imageUrl={imageUrl} />
+          </div>
+      }
+    </div>
+  );
 }
 
 export default App;
