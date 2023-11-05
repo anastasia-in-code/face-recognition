@@ -1,4 +1,4 @@
-import React, { useState, useReducer } from 'react'
+import React, { useState, useContext } from 'react'
 import {
   Routes,
   Route
@@ -8,6 +8,7 @@ import './App.css';
 import ParticlesBg from 'particles-bg'
 import { ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
+import { AuthProvider } from './AuthContext';
 
 //Pages
 import Home from './pages/Home'
@@ -18,7 +19,7 @@ import AuthForm from './components/forms/AuthForm';
 
 const App = () => {
   const [user, setUser] = useState({})
-  const [isAuth, setIsAuth] = useReducer(false)
+  const [isAuth, setIsAuth] = useState(false)
 
   // stores authorized user info into state
   const loadUser = (data) => {
@@ -38,20 +39,20 @@ const App = () => {
 
   return (
     <>
-      <Navigation isAuth={isAuth} onRouteChange={onRouteChange} />
-      <Routes>
-        <Route path='/' element={<Home user={user} setUser={setUser} />} />
-        <Route path='/signin' element={<AuthForm
-          formName={"Sign In"}
-          onRouteChange={onRouteChange}
-          loadUser={loadUser}
-        />} />
-        <Route path='/signup' element={<AuthForm
-          formName={"Sign Up"}
-          onRouteChange={onRouteChange}
-          loadUser={loadUser}
-        />} />
-      </Routes>
+      <AuthProvider>
+        <Navigation isAuth={isAuth} onRouteChange={onRouteChange} />
+        <Routes>
+          <Route path='/' element={<Home user={user} setUser={setUser} />} />
+          <Route path='/signin' element={<AuthForm
+            formName={"Sign In"}
+          />} />
+          <Route path='/signup' element={<AuthForm
+            formName={"Sign Up"}
+            onRouteChange={onRouteChange}
+            loadUser={loadUser}
+          />} />
+        </Routes>
+      </AuthProvider>
 
       <ToastContainer
         position="top-left"

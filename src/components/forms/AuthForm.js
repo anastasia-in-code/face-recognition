@@ -1,14 +1,23 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { Link, useNavigate } from "react-router-dom";
 import apiService from '../../api'
 import { toast } from 'react-toastify';
 import { object, string } from 'yup';
-import s from './AuthForm.module.css'
+import s from './AuthForm.module.css';
+import { useUser, useUserDispatch } from '../../AuthContext';
 
 //component is used for authentication (both signin and signup)
-const AuthForm = ({ formName, onRouteChange, loadUser }) => {
+const AuthForm = ({ formName, onRouteChange }) => {
+    const user = useUser()
+    const dispatch = useUserDispatch()
+    const navigate = useNavigate()
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [name, setName] = useState('')
+
+    useEffect(() => {
+        if(user.id) navigate('/')
+    }, [user, navigate])
 
     const onEmailChange = (event) => setEmail(event.target.value)
 
@@ -47,8 +56,12 @@ const AuthForm = ({ formName, onRouteChange, loadUser }) => {
                 await apiService.signin(email, password)
 
             if (data.id) {
-                loadUser(data)
-                onRouteChange('home')
+                console.log(data)
+                dispatch({
+                    type: 'signin',
+                    data
+                })
+                navigate('/')
             } else {
                 return toast.error(data)
             }
