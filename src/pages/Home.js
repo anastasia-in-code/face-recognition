@@ -1,18 +1,21 @@
 import {useState} from 'react'
+import Navigation from '../components/Navigation/Navigation'
 import Logo from '../components/Logo/Logo'
 import Rank from '../components/Rank/Rank'
 import ImageForm from '../components/ImageForm/ImageForm'
 import FaceRecognition from '../components/FaceRecognition/FaceRecognition'
+import { useUser, useUserDispatch } from '../AuthContext';
 
 import { toast } from 'react-toastify';
 import apiService from '../api'
 
-
-
-const Home = ({ user, setUser}) => {
+const Home = () => {
     const [input, setInput] = useState('')
     const [imageUrl, setImageUrl] = useState('')
     const [box, setBox] = useState({})
+
+    const user = useUser()
+    const dispatch = useUserDispatch()
 
 
     // handles input change
@@ -54,9 +57,12 @@ const Home = ({ user, setUser}) => {
             //request to update user rank(entries)
             if (user.id) {
                 const entries = await apiService.updateEntries(user.id)
-                setUser({
-                    ...user,
-                    entries: entries
+                dispatch({
+                    type: 'signin',
+                    data: {
+                        ...user,
+                        entries: entries
+                    }
                 })
             }
 
@@ -70,9 +76,10 @@ const Home = ({ user, setUser}) => {
 
 
     return <div>
+        <Navigation/>
         <Logo />
         <Rank
-            name={'Anonymous'}
+            name={user.name || 'Anonymous'}
             rank={user.entries} />
         <ImageForm
             onInputChange={onInputChange}

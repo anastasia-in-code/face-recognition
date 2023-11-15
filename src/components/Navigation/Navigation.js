@@ -1,9 +1,9 @@
 import React from 'react';
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import s from './Navigation.module.css'
 import { useUser, useUserDispatch } from '../../AuthContext';
 
-const Navigation = ({ onRouteChange, isAuth }) => {
+const Navigation = () => {
    const navigate = useNavigate()
    const user = useUser()
    const dispatch = useUserDispatch()

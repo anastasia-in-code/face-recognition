@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import apiService from '../../api'
 import { toast } from 'react-toastify';
 import { object, string } from 'yup';
@@ -7,7 +7,7 @@ import s from './AuthForm.module.css';
 import { useUser, useUserDispatch } from '../../AuthContext';
 
 //component is used for authentication (both signin and signup)
-const AuthForm = ({ formName, onRouteChange }) => {
+const AuthForm = ({ formName }) => {
     const user = useUser()
     const dispatch = useUserDispatch()
     const navigate = useNavigate()
@@ -17,7 +17,7 @@ const AuthForm = ({ formName, onRouteChange }) => {
 
     useEffect(() => {
         if(user.id) navigate('/')
-    }, [user, navigate])
+    }, [user])
 
     const onEmailChange = (event) => setEmail(event.target.value)
 
@@ -56,7 +56,6 @@ const AuthForm = ({ formName, onRouteChange }) => {
                 await apiService.signin(email, password)
 
             if (data.id) {
-                console.log(data)
                 dispatch({
                     type: 'signin',
                     data
@@ -124,13 +123,11 @@ const AuthForm = ({ formName, onRouteChange }) => {
                     <div className="lh-copy mt3">
                         {formName === 'Sign Up' ?
                             <p
-                                onClick={() => onRouteChange('signin')}
-                                href="#0"
+                                onClick={() => navigate('/signin')}
                                 className="f6 link dim black db pointer"
                             >Sign In</p> :
                             <p
-                                onClick={() => onRouteChange('signup')}
-                                href="#0"
+                                onClick={() => navigate('/signup')}
                                 className="f6 link dim black db pointer"
                             >Sign Up</p>}
                     </div>

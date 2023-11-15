@@ -14,7 +14,6 @@ import { AuthProvider } from './AuthContext';
 import Home from './pages/Home'
 
 //Components
-import Navigation from './components/Navigation/Navigation';
 import AuthForm from './components/forms/AuthForm';
 
 const App = () => {
@@ -40,7 +39,6 @@ const App = () => {
   return (
     <>
       <AuthProvider>
-        <Navigation isAuth={isAuth} onRouteChange={onRouteChange} />
         <Routes>
           <Route path='/' element={<Home user={user} setUser={setUser} />} />
           <Route path='/signin' element={<AuthForm
