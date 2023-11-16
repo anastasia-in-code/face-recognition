@@ -50,9 +50,8 @@ const Home = () => {
         if (!input) return toast.error('please, provide URL for detection')
         setImageUrl(input)
 
-
         // request to get face coordinates
-        const data = await apiService.clarifai(imageUrl)
+        const data = await apiService.clarifai(input)
 
         if (data.error) {
             return toast.error(data.error)
