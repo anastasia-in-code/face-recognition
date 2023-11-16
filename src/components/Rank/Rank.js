@@ -1,14 +1,19 @@
 import React from 'react'
 import s from './Rank.module.css'
 
-const Rank = (props) => {
-   const { name, rank } = props
+import { useUser } from '../../AuthContext';
+
+const Rank = () => {
+   const user = useUser()
+
+   let entries = user.entire || localStorage.getItem('entries') || 0
+
    return <div className={s.rank}>
       <div className="tc white f3">
-         {`${name}, your current rank is ...`}
+         {`${user.name || 'Anonymous'}, your current rank is ...`}
       </div>
       <div className="tc white f1">
-         {`#${rank}`}
+         {`#${entries}`}
       </div>
       <p className='tc f3 white'>
          {`This Magic Brain will detect faces in your pictures, give it a try!`}

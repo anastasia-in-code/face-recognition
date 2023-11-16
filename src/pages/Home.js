@@ -1,4 +1,4 @@
-import {useState} from 'react'
+import { useState } from 'react'
 import Navigation from '../components/Navigation/Navigation'
 import Logo from '../components/Logo/Logo'
 import Rank from '../components/Rank/Rank'
@@ -35,14 +35,14 @@ const Home = () => {
         const img = document.getElementById('imagedetection')
         const width = Number(img.width)
         const height = Number(img.height)
-    
+
         return {
-          leftCol: face.left_col * width,
-          topRow: face.top_row * height,
-          rightCol: width - (face.right_col * width),
-          bottomRow: height - (face.bottom_row * height)
+            leftCol: face.left_col * width,
+            topRow: face.top_row * height,
+            rightCol: width - (face.right_col * width),
+            bottomRow: height - (face.bottom_row * height)
         }
-      }
+    }
 
     // handles Submit
     // sends request to server
@@ -50,10 +50,16 @@ const Home = () => {
         if (!input) return toast.error('please, provide URL for detection')
         setImageUrl(input)
 
+
         // request to get face coordinates
         const data = await apiService.clarifai(imageUrl)
 
-        if (data.status.code === 10000) {
+        if (data.error) {
+            return toast.error(data.error)
+        }
+
+
+        if (data.status?.code === 10000) {
             //request to update user rank(entries)
             if (user.id) {
                 const entries = await apiService.updateEntries(user.id)
@@ -64,23 +70,21 @@ const Home = () => {
                         entries: entries
                     }
                 })
+            } else {
+                const entries = localStorage.getItem('entries') || 0
+                localStorage.setItem('entries', +entries + 1)
             }
 
             detectFace(calculateDetectedLocation(data))
         } else {
             toast.error(data.status.description)
-            setImageUrl('')
         }
     }
 
-
-
     return <div>
-        <Navigation/>
+        <Navigation />
         <Logo />
-        <Rank
-            name={user.name || 'Anonymous'}
-            rank={user.entries} />
+        <Rank />
         <ImageForm
             onInputChange={onInputChange}
             onSubmit={onSubmit} />
