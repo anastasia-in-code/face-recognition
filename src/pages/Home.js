@@ -30,17 +30,16 @@ const Home = () => {
         })
     }
 
-    const calculateDetectedLocation = (res) => {
-        const face = res.outputs[0].data.regions[0].region_info.bounding_box
+    const calculateDetectedLocation = (boxCoordinates) => {
         const img = document.getElementById('imagedetection')
         const width = Number(img.width)
         const height = Number(img.height)
 
         return {
-            leftCol: face.left_col * width,
-            topRow: face.top_row * height,
-            rightCol: width - (face.right_col * width),
-            bottomRow: height - (face.bottom_row * height)
+            leftCol: boxCoordinates.left_col * width,
+            topRow: boxCoordinates.top_row * height,
+            rightCol: width - (boxCoordinates.right_col * width),
+            bottomRow: height - (boxCoordinates.bottom_row * height)
         }
     }
 
@@ -73,8 +72,14 @@ const Home = () => {
                 const entries = localStorage.getItem('entries') || 0
                 localStorage.setItem('entries', +entries + 1)
             }
+            
+            let boxes = data.outputs[0].data.regions
 
-            detectFace(calculateDetectedLocation(data))
+            if (boxes) {
+                detectFace(calculateDetectedLocation(boxes[0].region_info.bounding_box))
+            } else {
+                toast.error('No face detected')
+            }
         } else {
             toast.error(data.status.description)
         }
