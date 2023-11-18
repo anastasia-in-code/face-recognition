@@ -6,11 +6,12 @@ import { useUser } from '../../AuthContext';
 const Rank = () => {
    const user = useUser()
 
-   let entries = user.entire || localStorage.getItem('entries') || 0
+   let entries = user.entries || localStorage.getItem('entries') || 0
+   let name = user.name || 'Anonymous'
 
    return <div className={s.rank}>
       <div className="tc white f3">
-         {`${user.name || 'Anonymous'}, your current rank is ...`}
+         {`${name}, your current rank is ...`}
       </div>
       <div className="tc white f1">
          {`#${entries}`}
