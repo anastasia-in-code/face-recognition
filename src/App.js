@@ -1,13 +1,14 @@
-import React, { useState, useContext } from 'react'
+import React from 'react'
 import {
   Routes,
   Route
 } from "react-router-dom";
 import 'tachyons'
-import './App.css';
 import ParticlesBg from 'particles-bg'
 import { ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
+
+//Context
 import { AuthProvider } from './AuthContext';
 
 //Pages
@@ -17,37 +18,17 @@ import Home from './pages/Home'
 import AuthForm from './components/forms/AuthForm';
 
 const App = () => {
-  const [user, setUser] = useState({})
-  const [isAuth, setIsAuth] = useState(false)
-
-  // stores authorized user info into state
-  const loadUser = (data) => {
-
-    setUser({
-      ...user,
-      id: data.id,
-      name: data.name,
-      email: data.email,
-      entries: data.entries,
-      joined_at: data.joined_at
-    })
-  }
-
-  const onRouteChange = () => { }
-
 
   return (
     <>
       <AuthProvider>
         <Routes>
-          <Route path='/' element={<Home user={user} setUser={setUser} />} />
+          <Route path='/' element={<Home />} />
           <Route path='/signin' element={<AuthForm
             formName={"Sign In"}
           />} />
           <Route path='/signup' element={<AuthForm
             formName={"Sign Up"}
-            onRouteChange={onRouteChange}
-            loadUser={loadUser}
           />} />
         </Routes>
       </AuthProvider>
