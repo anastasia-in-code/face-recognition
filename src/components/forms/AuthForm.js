@@ -17,13 +17,9 @@ const AuthForm = ({ formName }) => {
 
     useEffect(() => {
         if(user.id) navigate('/')
-    }, [user])
+    }, [user, navigate])
 
-    const onEmailChange = (event) => setEmail(event.target.value)
-
-    const onPasswordChange = (event) => setPassword(event.target.value)
-
-    const onNameChange = (event) => setName(event.target.value)
+    const handleInputChange = (event, setState) => setState(event.target.value)
 
     //validation Schema on signup
     let siginupUserSchema = object({
@@ -41,18 +37,12 @@ const AuthForm = ({ formName }) => {
     //AuthForm submittions
     const onSubmit = async () => {
         try {
-            if (formName === "Sign Up") {
-                await siginupUserSchema.validate({ name, email, password })
-            } else {
-                await sigininUserSchema.validate({ email, password })
-            }
+            const validationSchema = formName === 'Sign Up' ? siginupUserSchema : sigininUserSchema;
+
+            await validationSchema.validate({ name, email, password });
 
             const data = formName === "Sign Up" ?
-                await apiService.signup(
-                    email,
-                    name,
-                    password
-                ) :
+                await apiService.signup(email, name,password) :
                 await apiService.signin(email, password)
 
             if (data.id) {
@@ -83,7 +73,7 @@ const AuthForm = ({ formName }) => {
                                 className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
                                 type="text"
                                 name="name"
-                                onChange={onNameChange}
+                                onChange={(event) => handleInputChange(event, setName)}
                                 id="name" />
                         </div>}
                         <div className="mt3">
@@ -96,7 +86,7 @@ const AuthForm = ({ formName }) => {
                                 type="email"
                                 name="email-address"
                                 autoComplete="email"
-                                onChange={onEmailChange}
+                                onChange={(event) => handleInputChange(event, setEmail)}
                                 id="email-address" />
                         </div>
                         <div className="mv3">
@@ -109,7 +99,7 @@ const AuthForm = ({ formName }) => {
                                 type="password"
                                 autoComplete="current-password"
                                 name="password"
-                                onChange={onPasswordChange}
+                                onChange={(event) => handleInputChange(event, setPassword)}
                                 id="password" />
                         </div>
                     </fieldset>
