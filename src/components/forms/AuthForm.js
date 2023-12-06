@@ -1,11 +1,9 @@
 import { useState } from "react"
-import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import { object, string } from 'yup';
 import s from './AuthForm.module.css';
 
 const AuthForm = ({ setUserName }) => {
-    const navigate = useNavigate()
     const [name, setName] = useState('')
 
     const handleInputChange = (event, setState) => setState(event.target.value)

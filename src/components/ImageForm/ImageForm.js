@@ -32,7 +32,8 @@ const ImageForm = ({ setImageUrl, detectFace }) => {
     setImageUrl(input);
 
     try {
-      const data = await apiService.clarifai(input);
+      const data = await apiService.handleImage(input);
+      console.log(data)
 
       if (data.error) {
         return toast.error(data.error);
