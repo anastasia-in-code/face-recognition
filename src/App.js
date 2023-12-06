@@ -1,37 +1,26 @@
-import React from 'react'
-import {
-  Routes,
-  Route
-} from "react-router-dom";
+import React, {useState, useEffect} from 'react'
 import 'tachyons'
+import AuthForm from './components/forms/AuthForm';
 import ParticlesBg from 'particles-bg'
 import { ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 
-//Context
-import { AuthProvider } from './AuthContext';
-
 //Pages
 import Home from './pages/Home'
 
-//Components
-import AuthForm from './components/forms/AuthForm';
-
 const App = () => {
+  const [userName, setUserName] = useState('')
+
+
+  useEffect (()=> {
+    setUserName(localStorage.getItem('name'))
+},[])
+
+
 
   return (
     <>
-      <AuthProvider>
-        <Routes>
-          <Route path='/' element={<Home />} />
-          <Route path='/signin' element={<AuthForm
-            formName={"Sign In"}
-          />} />
-          <Route path='/signup' element={<AuthForm
-            formName={"Sign Up"}
-          />} />
-        </Routes>
-      </AuthProvider>
+     {userName ? <Home /> :  <AuthForm setUserName={setUserName}/>}
 
       <ToastContainer
         position="top-left"

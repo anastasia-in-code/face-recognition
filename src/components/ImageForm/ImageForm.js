@@ -2,12 +2,9 @@ import React, { useState } from 'react';
 import s from './ImageForm.module.css';
 import { toast } from 'react-toastify';
 import apiService from '../../api';
-import { useUser, useUserDispatch } from '../../AuthContext';
 
 const ImageForm = ({ setImageUrl, detectFace }) => {
   const [input, setInput] = useState('');
-  const user = useUser();
-  const dispatch = useUserDispatch();
 
   const onInputChange = (e) => {
     setInput(e.target.value);
@@ -26,19 +23,8 @@ const ImageForm = ({ setImageUrl, detectFace }) => {
   };
 
   const updateEntries = async () => {
-    if (user.id) {
-      const entries = await apiService.updateEntries(user.id);
-      dispatch({
-        type: 'signin',
-        data: {
-          ...user,
-          entries: entries,
-        },
-      });
-    } else {
       const entries = localStorage.getItem('entries') || 0;
       localStorage.setItem('entries', +entries + 1);
-    }
   };
 
   const onSubmit = async () => {
@@ -76,6 +62,7 @@ const ImageForm = ({ setImageUrl, detectFace }) => {
     <div className='flex justify-center'>
       <div className={`${s.form} w-65 pa4 br3 shadow-5`}>
         <input
+        placeholder='Image link...'
           className='f4 pa2 w-70 center'
           type='text'
           onChange={onInputChange}

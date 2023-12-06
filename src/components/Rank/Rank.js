@@ -1,13 +1,10 @@
 import React from 'react'
 import s from './Rank.module.css'
 
-import { useUser } from '../../AuthContext';
 
 const Rank = () => {
-   const user = useUser()
-
-   let entries = user.entries || localStorage.getItem('entries') || 0
-   let name = user.name || 'Anonymous'
+   let entries = localStorage.getItem('entries') || 0
+   let name = 'Anonymous'
 
    return <div className={s.rank}>
       <div className="tc white f3">

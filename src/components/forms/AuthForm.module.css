@@ -1,7 +1,17 @@
 .authForm {
+  width: 500px;
     background-image: linear-gradient(
         to right top,
         #348AC7,
         #F2F2F2
       );
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-around;
+}
+
+input {
+  margin-top: 2%;
 }

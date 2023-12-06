@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import Navigation from '../components/Navigation/Navigation'
 import Logo from '../components/Logo/Logo'
 import Rank from '../components/Rank/Rank'
 import ImageForm from '../components/ImageForm/ImageForm'
@@ -15,7 +14,6 @@ const Home = () => {
     }
 
     return <div>
-        <Navigation />
         <Logo />
         <Rank />
         <ImageForm
